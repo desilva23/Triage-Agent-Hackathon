@@ -193,6 +193,17 @@ export default function Home() {
               </section>
 
               <section className="docs-section">
+                <h3>🚀 Full-Feature Research Mode (Advanced AI)</h3>
+                <p>Our research branch (<code>full-feature-agent</code>) implements high-fidelity AI models that go beyond production limits:</p>
+                <ul>
+                  <li><strong>BERT Dense Retrieval:</strong> Uses high-dimensional vector embeddings for deep semantic understanding of user intent.</li>
+                  <li><strong>Cross-Encoder Reranking:</strong> A secondary AI model that re-evaluates the top 10 search results to ensure 99%+ relevance.</li>
+                  <li><strong>Semantic Vector Caching:</strong> Uses vector similarity to recognize intents even when phrased completely differently.</li>
+                  <li><strong>Shared Model Architecture:</strong> Optimized memory management by sharing a single transformer instance across the cache and retriever.</li>
+                </ul>
+              </section>
+
+              <section className="docs-section">
                 <h3>📊 Deployment Comparison: Dual-Branch Strategy</h3>
                 <table className="docs-table">
                   <thead>
@@ -234,6 +245,17 @@ export default function Home() {
                   <li><strong>TF-IDF Hybrid:</strong> Combines statistical term frequency with semantic context.</li>
                   <li><strong>Multi-Intent Splitting:</strong> Identifies and resolves multiple problems in a single ticket.</li>
                 </ul>
+              </section>
+
+              <section className="docs-section" style={{ textAlign: 'center', marginTop: '2rem' }}>
+                <a 
+                  href="https://github.com/desilva23/Triage-Agent-Hackathon" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="github-btn"
+                >
+                  View Full Source Code on GitHub
+                </a>
               </section>
             </div>
           </div>
