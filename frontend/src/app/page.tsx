@@ -174,8 +174,18 @@ export default function Home() {
             fontSize: '1.25rem', 
             fontWeight: 600, 
             color: 'var(--text-primary)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
           }}>
             Triage Agent
+            <div className="info-trigger">
+              <span className="info-icon">i</span>
+              <div className="info-tooltip">
+                <strong>AI Triage System</strong><br/>
+                An intelligent support agent using ReAct reasoning and RAG to resolve tickets with human-like precision.
+              </div>
+            </div>
           </h1>
           <button 
             onClick={() => setIsDarkMode(!isDarkMode)}

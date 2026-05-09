@@ -680,3 +680,81 @@ body {
 .example-pill:active {
   transform: translateY(0);
 }
+/* Info Icon & Tooltip */
+.info-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  cursor: help;
+}
+
+.info-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-family: serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.info-trigger:hover .info-icon {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.info-tooltip {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  width: 260px;
+  background: var(--bg-secondary);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  padding: 0.85rem;
+  border-radius: 0.85rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+  pointer-events: none;
+}
+
+.info-tooltip strong {
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+}
+
+.info-trigger:hover .info-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.info-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-color);
+}
