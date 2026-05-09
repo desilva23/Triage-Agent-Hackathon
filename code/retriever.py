@@ -33,9 +33,9 @@ class SupportRetriever:
 
         if self.use_hybrid:
             print("Loading embedding model (all-MiniLM-L6-v2)...")
+            # Using a single lightweight model to fit in 512MB RAM
             self.embedder = SentenceTransformer("all-MiniLM-L6-v2")
-            print("Loading Cross-Encoder reranker (ms-marco-MiniLM-L-6-v2)...")
-            self.reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
+            self.reranker = None # Disabled CrossEncoder for memory optimization on free tier
 
         self._index_corpus()
 
@@ -144,9 +144,9 @@ class SupportRetriever:
         if not top_candidates:
             return []
 
-        if not self.use_hybrid:
+        if not self.use_hybrid or self.reranker is None:
             return [
-                {"content": self.chunks[i]["content"], "path": self.chunks[i]["path"], "score": s}
+                {"content": self.chunks[i]["content"], "path": self.chunks[i]["path"], "score": float(s)}
                 for i, s in top_candidates[:top_k]
             ]
 
