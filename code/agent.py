@@ -22,12 +22,6 @@ from concurrent.futures import ThreadPoolExecutor
 from dotenv import load_dotenv
 from textblob import TextBlob
 
-import torch
-# Optimize memory for Render Free Tier (512MB)
-torch.set_num_threads(1)
-torch.set_num_interop_threads(1)
-from sentence_transformers import SentenceTransformer
-
 from retriever import SupportRetriever
 from llm_client import LLMClient
 from semantic_cache import SemanticCache
@@ -41,14 +35,10 @@ load_dotenv()
 
 class SupportAgent:
     def __init__(self):
-        print("Initialising Support Agent...")
+        print("Initialising Support Agent (Lightweight Production Mode)...")
         
-        # Load the model ONCE globally and share it
-        print("Loading shared embedding model (all-MiniLM-L6-v2)...")
-        shared_model = SentenceTransformer("all-MiniLM-L6-v2")
-        
-        self.cache = SemanticCache(model=shared_model)
-        self.retriever = SupportRetriever(model=shared_model)
+        self.cache = SemanticCache()
+        self.retriever = SupportRetriever()
         self.example_retriever = ExampleRetriever()
         self.llm = LLMClient()
         self.react = ReActAgent(self.retriever, self.llm)

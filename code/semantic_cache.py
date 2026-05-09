@@ -1,7 +1,7 @@
 import os
 import json
 import numpy as np
-from sentence_transformers import SentenceTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from utils import resolve_path
 
@@ -9,12 +9,8 @@ class SemanticCache:
     def __init__(self, cache_file="data/semantic_cache.json", threshold=0.95, model=None):
         self.cache_file = resolve_path(cache_file)
         self.threshold = threshold
-        
-        if model:
-            self.model = model
-        else:
-            print(f"Loading embedding model for cache: all-MiniLM-L6-v2...")
-            self.model = SentenceTransformer("all-MiniLM-L6-v2")
+        self.vectorizer = TfidfVectorizer(stop_words='english')
+        self.model = None # Lightweight mode
         
         self.queries = []
         self.embeddings = []
@@ -50,34 +46,36 @@ class SemanticCache:
             print(f"Failed to save cache: {e}")
 
     def get(self, query):
-        """Checks if the query is in the cache (semantically)."""
-        if not self.embeddings:
+        """Checks if the query is in the cache (semantically or via keywords)."""
+        if not self.queries:
             return None
             
-        query_emb = self.model.encode([query])[0]
+        # Simple keyword overlap for lightweight mode
+        query_set = set(query.lower().split())
+        best_score = 0
+        best_idx = -1
         
-        # Calculate cosine similarity against all cached embeddings
-        # Reshape to 2D array for sklearn
-        cached_embs_array = np.array(self.embeddings)
-        similarities = cosine_similarity([query_emb], cached_embs_array)[0]
-        
-        max_sim_idx = np.argmax(similarities)
-        max_sim = similarities[max_sim_idx]
+        for i, q in enumerate(self.queries):
+            cached_set = set(q.lower().split())
+            if not cached_set: continue
+            overlap = len(query_set.intersection(cached_set)) / len(query_set.union(cached_set))
+            if overlap > best_score:
+                best_score = overlap
+                best_idx = i
         
         from telemetry import telemetry
-        if max_sim >= self.threshold:
-            print(f"  [CACHE HIT] Semantic match ({max_sim:.2f}) found for query!")
-            telemetry.log_cache_hit(500) # Estimate 500 tokens saved
-            return self.responses[max_sim_idx]
+        if best_score >= self.threshold:
+            print(f"  [CACHE HIT] Keyword match ({best_score:.2f}) found for query!")
+            telemetry.log_cache_hit(500) 
+            return self.responses[best_idx]
             
-        print(f"  [CACHE MISS] Best match was {max_sim:.2f} (Threshold: {self.threshold})")
+        print(f"  [CACHE MISS] Best match was {best_score:.2f} (Threshold: {self.threshold})")
         telemetry.log_cache_miss()
         return None
 
     def set(self, query, response_dict):
         """Adds a query and its response to the cache."""
-        query_emb = self.model.encode([query])[0]
         self.queries.append(query)
-        self.embeddings.append(query_emb)
         self.responses.append(response_dict)
+        # We don't store embeddings in lightweight mode
         self._save_cache()
