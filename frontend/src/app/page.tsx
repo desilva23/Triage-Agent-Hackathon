@@ -211,6 +211,28 @@ export default function Home() {
           <div ref={messagesEndRef} />
         </div>
 
+        {/* Quick Examples */}
+        <div className="quick-examples">
+          {[
+            "I need a refund for my last payment",
+            "My login is blocked on HackerRank",
+            "What is the status of my Visa application?",
+            "How do I reset my password?"
+          ].map((ex, i) => (
+            <button 
+              key={i} 
+              className="example-pill"
+              onClick={() => {
+                setInput(ex);
+                // Optionally auto-submit:
+                // handleSubmit(new Event('submit') as any);
+              }}
+            >
+              {ex}
+            </button>
+          ))}
+        </div>
+
         <form className="input-container" onSubmit={handleSubmit}>
           <textarea
             className="input-box"
