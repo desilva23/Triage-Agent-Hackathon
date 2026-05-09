@@ -111,6 +111,7 @@ export default function Home() {
               setLogs(prev => [...prev, { type: 'system', message: `✓ ${event.observation}` }]);
             }
             else if (event.type === 'final') {
+              setIsLoading(false); // End loading immediately
               const data = event.data;
               setMessages(prev => [...prev, { 
                 id: Date.now().toString(), 
