@@ -145,13 +145,13 @@ export default function Home() {
     }
   };
 
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
-    if (isDarkMode) {
-      document.body.classList.add('dark-mode');
+    if (!isDarkMode) {
+      document.body.classList.add('light-mode');
     } else {
-      document.body.classList.remove('dark-mode');
+      document.body.classList.remove('light-mode');
     }
   }, [isDarkMode]);
 
