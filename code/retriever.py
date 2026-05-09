@@ -21,7 +21,7 @@ from chunker import chunk_markdown
 
 
 class SupportRetriever:
-    def __init__(self, data_dir="data", use_hybrid=True):
+    def __init__(self, data_dir="data", use_hybrid=True, model=None):
         self.data_dir = resolve_path(data_dir)
         self.use_hybrid = use_hybrid
 
@@ -32,9 +32,13 @@ class SupportRetriever:
         self.bm25 = None
 
         if self.use_hybrid:
-            print("Loading embedding model (all-MiniLM-L6-v2)...")
-            # Using a single lightweight model to fit in 512MB RAM
-            self.embedder = SentenceTransformer("all-MiniLM-L6-v2")
+            if model:
+                self.embedder = model
+            else:
+                print("Loading embedding model (all-MiniLM-L6-v2)...")
+                # Using a single lightweight model to fit in 512MB RAM
+                self.embedder = SentenceTransformer("all-MiniLM-L6-v2")
+            
             self.reranker = None # Disabled CrossEncoder for memory optimization on free tier
 
         self._index_corpus()

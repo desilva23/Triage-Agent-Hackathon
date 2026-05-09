@@ -6,11 +6,15 @@ from sklearn.metrics.pairwise import cosine_similarity
 from utils import resolve_path
 
 class SemanticCache:
-    def __init__(self, cache_file="data/semantic_cache.json", threshold=0.95, model_name="all-MiniLM-L6-v2"):
+    def __init__(self, cache_file="data/semantic_cache.json", threshold=0.95, model=None):
         self.cache_file = resolve_path(cache_file)
         self.threshold = threshold
-        print(f"Loading embedding model for cache: {model_name}...")
-        self.model = SentenceTransformer(model_name)
+        
+        if model:
+            self.model = model
+        else:
+            print(f"Loading embedding model for cache: all-MiniLM-L6-v2...")
+            self.model = SentenceTransformer("all-MiniLM-L6-v2")
         
         self.queries = []
         self.embeddings = []
