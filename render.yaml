@@ -1,6 +1,7 @@
 services:
   - type: web
     name: triage-agent-backend
+    plan: free
     env: python
     buildCommand: pip install -r code/requirements.txt
     startCommand: uvicorn code.api:app --host 0.0.0.0 --port $PORT
