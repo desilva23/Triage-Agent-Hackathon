@@ -1,0 +1,11 @@
+Issue,Subject,Company,Response,Product Area,Status,Request Type
+I notice that people I assigned the test in October of 2025 have not received new tests. How long do the tests stay active in the system.,Test Active in the system,HackerRank,"Hi,
+
+
+Tests in HackerRank remain active indefinitely unless a start and end time are set. 
+Without these, tests do not expire automatically.
+
+
+
+To set expiration times, specify a start and end date/time in the test settings. After expiration:
+

@@ -29,5 +29,13 @@ Thumbs.db
 # local data / caches the participant may create
 data/index/
 data/embeddings/
+data/*.json
+data/*.npy
 *.sqlite
 *.db
+
+# artifacts
+log.txt
+*.zip
+output.csv
+FINAL_AUDIT_REPORT.md
