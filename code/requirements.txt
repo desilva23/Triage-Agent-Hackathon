@@ -1,6 +1,7 @@
 groq
 rank_bm25
 python-dotenv
+sentence-transformers
 scikit-learn
 textblob
 fastapi
