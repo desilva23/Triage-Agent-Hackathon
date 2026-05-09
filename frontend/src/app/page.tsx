@@ -74,7 +74,8 @@ export default function Home() {
         body: JSON.stringify({
           issue_text: userMessage,
           subject: "Live Chat Ticket",
-          company: "HackerRank User"
+          company: "HackerRank User",
+          history: messages.map(m => ({ role: m.role, content: m.content })).slice(-10)
         }),
       });
 

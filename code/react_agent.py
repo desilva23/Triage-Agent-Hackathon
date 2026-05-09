@@ -75,19 +75,28 @@ You MUST follow the ReAct (Reason + Act) format at every step.
 }
 """
 
-def _build_user_message(issue, subject, company, trajectory, sentiment_score=0.0, examples=""):
+def _build_user_message(issue, subject, company, trajectory, sentiment_score=0.0, examples="", history: list = []):
     """Constructs the growing conversation context for the ReAct loop."""
     sentiment_context = ""
     if sentiment_score < -0.3:
         sentiment_context = f"\n[System Note: User sentiment is negative ({sentiment_score:.2f}). Please adopt a highly empathetic and apologetic tone.]"
     
-    lines = [
-        f"## Support Ticket",
+    lines = []
+    
+    if history:
+        lines.append("## Previous Conversation History")
+        for msg in history:
+            role = "User" if msg["role"] == "user" else "Agent"
+            lines.append(f"{role}: {msg['content']}")
+        lines.append("")
+
+    lines.extend([
+        f"## Current Support Ticket",
         f"Company: {company or 'Unknown'}",
         f"Subject: {subject or '(none)'}",
         f"Issue: {issue}{sentiment_context}",
         "",
-    ]
+    ])
 
     if examples:
         lines.append("## Relevant Examples (Few-Shot)")
@@ -137,14 +146,14 @@ class ReActAgent:
                 final_result = event["data"]
         return final_result
 
-    def run_stream(self, issue: str, subject: str, company: str, sentiment_score: float = 0.0, examples: str = ""):
+    def run_stream(self, issue: str, subject: str, company: str, sentiment_score: float = 0.0, examples: str = "", history: list = []):
         """
         Generator that yields ReAct steps and the final result.
         """
         trajectory = []
 
         for step_num in range(1, self.MAX_STEPS + 1):
-            user_msg = _build_user_message(issue, subject, company, trajectory, sentiment_score, examples)
+            user_msg = _build_user_message(issue, subject, company, trajectory, sentiment_score, examples, history=history)
             raw = self.llm.get_structured_output(REACT_SYSTEM_PROMPT, user_msg)
 
             if not raw:
