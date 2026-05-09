@@ -66,20 +66,20 @@ class SupportAgent:
                 final_result = event["data"]
         return final_result
 
-    def process_issue_stream(self, issue_text: str, subject: str, company: str):
-        """Streaming version of the pipeline."""
+    def process_issue_stream(self, issue_text: str, subject: str, company: str, history: list = []):
+        """Streaming version of the pipeline with optional history support."""
         issue_text = clean_text(issue_text)
         subject = clean_text(subject)
-        cache_key = f"{subject} | {issue_text} | {company}"
-
-        # ── 0. Semantic Cache ──────────────────────────────────────────
-        cached = self.cache.get(cache_key)
-        if cached:
-            yield {"type": "cache", "status": "hit", "match": 1.0}
-            yield {"type": "final", "data": cached}
-            return
         
-        yield {"type": "cache", "status": "miss"}
+        # Don't cache if there is conversation history (context is dynamic)
+        if not history:
+            cache_key = f"{subject} | {issue_text} | {company}"
+            cached = self.cache.get(cache_key)
+            if cached:
+                yield {"type": "cache", "status": "hit", "match": 1.0}
+                yield {"type": "final", "data": cached}
+                return
+            yield {"type": "cache", "status": "miss"}
 
         # ── 1. Safety ──────────────────────────────────────────────────
         safety = check_safety(f"{subject} {issue_text}")
@@ -91,7 +91,8 @@ class SupportAgent:
                 "justification": safety["reason"],
                 "request_type": "product_issue",
             }
-            self.cache.set(cache_key, result)
+            if not history:
+                self.cache.set(cache_key, result)
             yield {"type": "safety", "status": "escalated", "reason": safety["reason"]}
             yield {"type": "final", "data": result}
             return
@@ -100,9 +101,9 @@ class SupportAgent:
         examples = self.example_retriever.get_examples(issue_text, k=2)
         sentiment_score = TextBlob(f"{subject} {issue_text}").sentiment.polarity
 
-        for event in self.react.run_stream(issue_text, subject, company, sentiment_score, examples):
+        for event in self.react.run_stream(issue_text, subject, company, sentiment_score, examples, history=history):
             yield event
-            if event["type"] == "final":
+            if event["type"] == "final" and not history:
                 self.cache.set(cache_key, event["data"])
 
     # ------------------------------------------------------------------ #

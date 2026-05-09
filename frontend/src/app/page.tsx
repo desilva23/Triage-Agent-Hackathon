@@ -74,7 +74,8 @@ export default function Home() {
         body: JSON.stringify({
           issue_text: userMessage,
           subject: "Live Chat Ticket",
-          company: "HackerRank User"
+          company: "HackerRank User",
+          history: messages.map(m => ({ role: m.role, content: m.content })).slice(-10)
         }),
       });
 
@@ -145,13 +146,13 @@ export default function Home() {
     }
   };
 
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
-    if (isDarkMode) {
-      document.body.classList.add('dark-mode');
+    if (!isDarkMode) {
+      document.body.classList.add('light-mode');
     } else {
-      document.body.classList.remove('dark-mode');
+      document.body.classList.remove('light-mode');
     }
   }, [isDarkMode]);
 
@@ -174,8 +175,18 @@ export default function Home() {
             fontSize: '1.25rem', 
             fontWeight: 600, 
             color: 'var(--text-primary)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
           }}>
             Triage Agent
+            <div className="info-trigger">
+              <span className="info-icon">i</span>
+              <div className="info-tooltip">
+                <strong>AI Triage System</strong><br/>
+                An intelligent support agent using ReAct reasoning and RAG to resolve tickets with human-like precision.
+              </div>
+            </div>
           </h1>
           <button 
             onClick={() => setIsDarkMode(!isDarkMode)}
@@ -209,6 +220,28 @@ export default function Home() {
             </div>
           )}
           <div ref={messagesEndRef} />
+        </div>
+
+        {/* Quick Examples */}
+        <div className="quick-examples">
+          {[
+            "I need a refund for my last payment",
+            "My login is blocked on HackerRank",
+            "What is the status of my Visa application?",
+            "How do I reset my password?"
+          ].map((ex, i) => (
+            <button 
+              key={i} 
+              className="example-pill"
+              onClick={() => {
+                setInput(ex);
+                // Optionally auto-submit:
+                // handleSubmit(new Event('submit') as any);
+              }}
+            >
+              {ex}
+            </button>
+          ))}
         </div>
 
         <form className="input-container" onSubmit={handleSubmit}>

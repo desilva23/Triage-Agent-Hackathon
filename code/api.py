@@ -27,6 +27,7 @@ class IssueRequest(BaseModel):
     issue_text: str
     subject: str = "Support Ticket"
     company: str = "Unknown"
+    history: list = []
 
 from fastapi.responses import StreamingResponse
 import json
@@ -36,8 +37,8 @@ import asyncio
 async def chat(req: IssueRequest):
     def event_generator():
         try:
-            # Run the generator from the agent
-            for event in agent.process_issue_stream(req.issue_text, req.subject, req.company):
+            # Run the generator from the agent with history
+            for event in agent.process_issue_stream(req.issue_text, req.subject, req.company, history=req.history):
                 yield json.dumps(event) + "\n"
         except Exception as e:
             yield json.dumps({"type": "error", "message": str(e)}) + "\n"
