@@ -148,6 +148,7 @@ export default function Home() {
   };
 
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [showDocs, setShowDocs] = useState(false);
 
   useEffect(() => {
     if (!isDarkMode) {
@@ -169,6 +170,76 @@ export default function Home() {
 
   return (
     <main className="app-container">
+      {/* Documentation Modal */}
+      {showDocs && (
+        <div className="modal-overlay" onClick={() => setShowDocs(false)}>
+          <div className="modal-content docs-modal" onClick={e => e.stopPropagation()}>
+            <header className="modal-header">
+              <h2>Technical Architecture & Methodology</h2>
+              <button className="close-btn" onClick={() => setShowDocs(false)}>&times;</button>
+            </header>
+            <div className="modal-body">
+              <section className="docs-section">
+                <h3>🧠 The Reasoning Loop: ReAct</h3>
+                <p>Unlike standard linear chatbots, this agent uses the <strong>ReAct (Reason + Act)</strong> pattern. For every ticket, the LLM generates a <em>thought</em>, chooses a <em>tool</em>, and analyzes the <em>observation</em> before responding.</p>
+                <div className="diagram-box">
+                  <code>Thought → Action (Search) → Observation → Thought → Respond</code>
+                </div>
+              </section>
+
+              <section className="docs-section">
+                <h3>🛰️ Retrieval Augmented Generation (RAG)</h3>
+                <p>The system is grounded in ground-truth support documentation. We use a hybrid search engine combining keyword-based <strong>BM25</strong> and vector-based <strong>Semantic Search</strong>.</p>
+              </section>
+
+              <section className="docs-section">
+                <h3>📊 Deployment Comparison: Dual-Branch Strategy</h3>
+                <table className="docs-table">
+                  <thead>
+                    <tr>
+                      <th>Feature</th>
+                      <th>Production (Live)</th>
+                      <th>Full-Feature (Local)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Engine</td>
+                      <td>Lightweight TF-IDF</td>
+                      <td>BERT + Cross-Encoder</td>
+                    </tr>
+                    <tr>
+                      <td>Memory</td>
+                      <td>Optimized (512MB RAM)</td>
+                      <td>High-End (GPU/8GB RAM)</td>
+                    </tr>
+                    <tr>
+                      <td>Reranking</td>
+                      <td>Heuristic Score</td>
+                      <td>AI-Driven Cross-Rerank</td>
+                    </tr>
+                    <tr>
+                      <td>Deployment</td>
+                      <td>Render Free Tier</td>
+                      <td>On-Premise / Edge</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </section>
+
+              <section className="docs-section">
+                <h3>🔍 Core Jargon</h3>
+                <ul>
+                  <li><strong>Semantic Cache:</strong> Prevents redundant LLM calls by caching similar query intents.</li>
+                  <li><strong>TF-IDF Hybrid:</strong> Combines statistical term frequency with semantic context.</li>
+                  <li><strong>Multi-Intent Splitting:</strong> Identifies and resolves multiple problems in a single ticket.</li>
+                </ul>
+              </section>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Chat Section */}
       <section className="glass-panel chat-section">
         <header className="chat-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 2rem' }}>
@@ -189,22 +260,30 @@ export default function Home() {
               </div>
             </div>
           </h1>
-          <button 
-            onClick={() => setIsDarkMode(!isDarkMode)}
-            style={{ 
-              background: 'var(--bg-tertiary)', 
-              border: '1px solid var(--border-color)',
-              borderRadius: '0.5rem',
-              padding: '0.5rem 0.75rem',
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              color: 'var(--text-primary)',
-              fontWeight: 500,
-              transition: 'all 0.2s'
-            }}
-          >
-            {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-          </button>
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <button 
+              onClick={() => setShowDocs(true)}
+              className="docs-btn"
+            >
+              Docs
+            </button>
+            <button 
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              style={{ 
+                background: 'var(--bg-tertiary)', 
+                border: '1px solid var(--border-color)',
+                borderRadius: '0.5rem',
+                padding: '0.5rem 0.75rem',
+                cursor: 'pointer',
+                fontSize: '0.875rem',
+                color: 'var(--text-primary)',
+                fontWeight: 500,
+                transition: 'all 0.2s'
+              }}
+            >
+              {isDarkMode ? 'Light' : 'Dark'}
+            </button>
+          </div>
         </header>
         
         <div className="messages-container">
